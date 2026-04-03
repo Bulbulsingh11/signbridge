@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignBridge</title>
+  <style>
+    /* ── Popup Variables ─────────────────────────────────────────────── */
+    :root {
+      --bg:         #0f0f19;
+      --surface:    #1a1a2e;
+      --border:     rgba(100, 100, 180, 0.18);
+      --accent:     #6c63ff;
+      --accent-dim: rgba(108, 99, 255, 0.25);
+      --text:       #e8e6f0;
+      --text-muted: #9a96b0;
+      --danger:     #ff5e5e;
+      --success:    #34d399;
+      --font:       'Segoe UI', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    .popup-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 18px 12px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.15), transparent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .popup-header .logo-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-dim);
+    }
+
+    .popup-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .popup-header .version {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.06);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* ── Status ──────────────────────────────────────────────────────── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.connected    { background: var(--success); box-shadow: 0 0 6px rgba(52,211,153,0.5); }
+    .status-dot.disconnected { background: var(--danger);  box-shadow: 0 0 6px rgba(255,94,94,0.4); }
+
+    .status-text {
+      font-size: 12px;
+    }
+
+    /* ── Settings Form ───────────────────────────────────────────────── */
+    .settings {
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 8px 12px;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+    }
+
+    .field select option {
+      background: var(--bg);
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────────────── */
+    .actions {
+      padding: 0 18px 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 9px 0;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.96); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #5a52e0; }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    /* ── Toast ────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%) translateY(40px);
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--success);
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    .popup-footer {
+      padding: 8px 18px;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .popup-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="popup-header">
+    <span class="logo-dot"></span>
+    <h1>SignBridge</h1>
+    <span class="version">v1.0.0</span>
+  </div>
+
+  <!-- Status -->
+  <div class="status-row">
+    <span class="status-dot disconnected" id="status-dot"></span>
+    <span class="status-text" id="status-text">Checking backend…</span>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings">
+    <div class="field">
+      <label for="backend-url">Backend URL</label>
+      <input type="url" id="backend-url" value="http://localhost:5000" placeholder="http://localhost:5000" />
+    </div>
+
+    <div class="field">
+      <label for="lang-select">Default Language</label>
+      <select id="lang-select">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+        <option value="es">Español (Spanish)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="te">తెలుగు (Telugu)</option>
+        <option value="bn">বাংলা (Bengali)</option>
+        <option value="mr">मराठी (Marathi)</option>
+        <option value="gu">ગુજરાતી (Gujarati)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn btn-primary" id="btn-save">Save Settings</button>
+    <button class="btn btn-ghost" id="btn-toggle">Toggle Panel</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="popup-footer">
+    ISL Communication Assistant · <a href="https://github.com/signbridge" target="_blank">GitHub</a>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">Settings saved ✓</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

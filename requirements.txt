@@ -1,0 +1,26 @@
+# SignBridge Backend — Python Dependencies
+
+# Core
+flask
+flask-cors
+python-dotenv
+gunicorn
+
+# Computer Vision & Hand Detection
+opencv-python-headless
+mediapipe
+numpy
+
+# AI / LLM
+anthropic
+langchain
+langchain-anthropic
+langchain-core
+
+# ML Model Support
+scikit-learn
+joblib
+
+# Utilities
+Pillow
+requests

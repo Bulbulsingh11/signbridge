@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6c5ce7"/>
+      <stop offset="0.5" stop-color="#a29bfe"/>
+      <stop offset="1" stop-color="#00cec9"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6c5ce7" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#00cec9" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#g2)" stroke="url(#g1)" stroke-width="2"/>
+  <!-- Bridge arch -->
+  <path d="M14 40 C14 24 32 12 32 12 C32 12 50 24 50 40" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Bridge deck -->
+  <line x1="12" y1="40" x2="52" y2="40" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Hand left -->
+  <path d="M20 36 L20 30 M18 33 L20 30 L22 33" stroke="#a29bfe" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Hand right -->
+  <path d="M44 36 L44 30 M42 33 L44 30 L46 33" stroke="#00cec9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Signal waves left -->
+  <path d="M16 28 C12 26 12 22 16 20" stroke="#a29bfe" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <!-- Signal waves right -->
+  <path d="M48 28 C52 26 52 22 48 20" stroke="#00cec9" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <!-- Pillars -->
+  <line x1="20" y1="40" x2="20" y2="46" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="44" y1="40" x2="44" y2="46" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Base -->
+  <line x1="12" y1="46" x2="52" y2="46" stroke="url(#g1)" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+</svg>
