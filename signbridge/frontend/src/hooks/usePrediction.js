@@ -23,29 +23,69 @@ export function usePrediction(captureFrame, isWebcamActive) {
     }, 1000);
 
     // Prediction loop — every 500ms
-    intervalRef.current = setInterval(async () => {
-      const frame = captureFrame();
-      if (!frame) return;
+    const lastSignRef = { current: null };
+    const stabilityCounterRef = { current: 0 };
+    const isProcessingRef = { current: false };
+    const STABILITY_THRESHOLD = 3; // Number of detections needed for a sign to be 'finalized'
 
-      frameCountRef.current++;
+    intervalRef.current = setInterval(async () => {
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
 
       try {
+        const frame = captureFrame();
+        if (!frame) {
+          isProcessingRef.current = false;
+          return;
+        }
+
+        frameCountRef.current++;
+
         const result = await predictSign(frame);
         if (result && result.prediction) {
+          const sign = result.prediction;
+          const conf = result.confidence || 0;
+          
           const entry = {
             id: Date.now(),
-            sign: result.prediction,
-            confidence: result.confidence || 0,
+            sign: sign,
+            confidence: conf,
+            isMock: result.isMock || false,
             translations: result.translations || {},
             timestamp: new Date(),
           };
 
           setCurrentPrediction(entry);
-          setConfidence(Math.round((result.confidence || 0) * 100));
-          setPredictions(prev => [entry, ...prev].slice(0, 50)); // Keep last 50
+          setConfidence(Math.round(conf * 100));
+
+          // --- Sign History Logic (Debounced/Smoothed) ---
+          // Only add to transcript if:
+          // 1. It's high confidence (> 0.7)
+          // 2. It's different from the last added sign OR enough time passed
+          if (conf > 0.7) {
+            if (sign !== lastSignRef.current) {
+              stabilityCounterRef.current++;
+              
+              if (stabilityCounterRef.current >= STABILITY_THRESHOLD) {
+                setPredictions(prev => [entry, ...prev].slice(0, 50));
+                lastSignRef.current = sign;
+                stabilityCounterRef.current = 0;
+              }
+            } else {
+              // Sign is the same, reset counter to avoid re-adding
+              stabilityCounterRef.current = 0;
+            }
+          }
+        } else {
+          // No hand/sign detected, reset stability
+          setCurrentPrediction(null);
+          setConfidence(0);
+          stabilityCounterRef.current = 0;
         }
       } catch (err) {
         console.error('Prediction error:', err);
+      } finally {
+        isProcessingRef.current = false;
       }
     }, 500);
   }, [captureFrame, isWebcamActive]);

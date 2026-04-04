@@ -17,7 +17,7 @@ import logging
 from flask import Flask, request
 from flask_cors import CORS
 from dotenv import load_dotenv
-import cv2
+import cv2  # pylint: disable=no-member
 import numpy as np
 
 from config import Config
@@ -121,8 +121,8 @@ def predict_sign():
                 'message': 'No hands detected in frame',
             })
 
-        # 2️⃣  Classify the sign using GestureClassifier
-        prediction = gesture_classifier.predict(landmarks)
+        # 2️⃣  Classify the sign using SignClassifier (rule-based ISL)
+        prediction = sign_classifier.classify(landmarks)
 
         # 3️⃣  Translate to requested language
         target_lang = request.args.get('lang', 'hi')

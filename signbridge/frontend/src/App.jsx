@@ -42,12 +42,19 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // ── Auto-start detection when camera becomes active ──
+  // useEffect ensures we always see the latest isCameraActive state,
+  // avoiding the stale-closure bug of calling startDetection() in a setTimeout.
+  useEffect(() => {
+    if (isCameraActive && !isDetecting) {
+      startDetection();
+    }
+  }, [isCameraActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Start/Stop Handlers ──
   const handleStart = useCallback(async () => {
     await startCamera();
-    // Small delay to let camera initialize
-    setTimeout(() => startDetection(), 800);
-  }, [startCamera, startDetection]);
+  }, [startCamera]);
 
   const handleStop = useCallback(() => {
     stopDetection();
@@ -73,7 +80,7 @@ export default function App() {
   }, [isCameraActive, handleStart, handleStop]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Navbar */}
       <Navbar
         isConnected={isConnected}
@@ -82,7 +89,7 @@ export default function App() {
       />
 
       {/* Main Content — Two Panel Layout */}
-      <main className="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:p-6 overflow-hidden">
+      <main className="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:p-6 overflow-hidden min-h-0">
         {/* Left Panel — Webcam */}
         <section className="w-full lg:w-1/2 flex flex-col animate-[fade-in_0.5s_ease-out]" aria-label="Webcam Feed">
           <WebcamPanel

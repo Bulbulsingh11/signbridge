@@ -1,0 +1,6 @@
+﻿[MASTER]
+init-hook='import sys; sys.path.append("c:/Users/MUKESH SINGH/Desktop/backend")'
+
+[TYPECHECK]
+generated-members=cv2.*,mediapipe.*,mp.*
+

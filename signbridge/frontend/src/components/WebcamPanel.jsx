@@ -6,7 +6,7 @@ export default function WebcamPanel({ videoRef, canvasRef, isActive, isDetecting
         {/* Video Feed */}
         <video
           ref={videoRef}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 w-full h-full object-contain bg-black/20 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}
           autoPlay
           playsInline
           muted

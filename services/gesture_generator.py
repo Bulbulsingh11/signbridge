@@ -30,7 +30,7 @@ class GestureGenerator:
         and returns the raw MP4 bytes. In a real system this would be replaced
         with a model that generates landmark sequences and renders them.
         """
-        import cv2
+        import cv2  # pylint: disable=no-member
         import numpy as np
         import tempfile
         import os
